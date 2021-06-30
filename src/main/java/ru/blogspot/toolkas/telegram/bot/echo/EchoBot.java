@@ -32,9 +32,15 @@ public class EchoBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             //проверяем есть ли сообщение и текстовое ли оно
+
             if (update.hasMessage() && update.getMessage().hasText()) {
+
                 //Извлекаем объект входящего сообщения
+
                 Message inMessage = update.getMessage();
+
+
+
                 //Создаем исходящее сообщение
               //  SendMessage outMessage = new SendMessage();
                 //Указываем в какой чат будем отправлять сообщение
@@ -42,19 +48,30 @@ public class EchoBot extends TelegramLongPollingBot {
              //   outMessage.setChatId(inMessage.getChatId());
                 //Указываем текст сообщения
                // outMessage.setText("Кукла Нустя не плачь");
-                SendVoice sv = new SendVoice();
+
+
+
+            /*    SendVoice sv = new SendVoice();
                 sv.setChatId(inMessage.getChatId());
                 File testvoice = new File("resourses/test.opus");
-                sv.setVoice(testvoice);
-                execute(sv);
-             //   execute(sendInlineKeyBoardMessage(inMessage.getChatId()));
+                sv.setVoice(testvoice);*/
+
+              //  execute(sv);
+               execute(sendInlineKeyBoardMessage(inMessage.getChatId()));
                 //Отправляем сообщение
                // execute(outMessage);
             } else if(update.hasCallbackQuery()){
                 try {
-                    execute(new SendMessage().setText(
+                  String filename =  update.getCallbackQuery().getData();
+                    SendVoice sv = new SendVoice();
+                    sv.setChatId(update.getCallbackQuery().getMessage().getChatId());
+                    File testvoice = new File("resourses/"+filename+".opus");
+                    sv.setVoice(testvoice);
+                      execute(sv);
+
+                    /*execute(new SendMessage().setText(
                             update.getCallbackQuery().getData())
-                            .setChatId(update.getCallbackQuery().getMessage().getChatId()));
+                            .setChatId(update.getCallbackQuery().getMessage().getChatId()));*/
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
