@@ -9,12 +9,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 
+import static ru.blogspot.toolkas.telegram.bot.echo.ListKey.ListKekReturn;
 import static ru.blogspot.toolkas.telegram.bot.echo.ListKey.sendInlineKeyBoardMessage;
 
 /**
  * Класс-обработчик поступающих к боту сообщений.
  */
 public class EchoBot extends TelegramLongPollingBot {
+
+
+
+
     /**
      * Метод, который возвращает токен, выданный нам ботом @BotFather.
      * @return токен
@@ -24,6 +29,7 @@ public class EchoBot extends TelegramLongPollingBot {
         return "1859376771:AAHTOFDtEoihMDHlcpIzpNi-ftTNnmWG4rA";
     }
 
+
     /**
      * Метод-обработчик поступающих сообщений.
      * @param update объект, содержащий информацию о входящем сообщении
@@ -31,41 +37,33 @@ public class EchoBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         try {
-            //проверяем есть ли сообщение и текстовое ли оно
 
-            if (update.hasMessage() && update.getMessage().hasText()) {
+            if (update.hasInlineQuery()) {
+               System.out.println("запросили из чата");
+                update.getInlineQuery();
+                execute(ListKekReturn(update.getInlineQuery()));
+                System.out.println("нажал на кнопку");
 
-                //Извлекаем объект входящего сообщения
+            } else if (update.hasMessage() && update.getMessage().hasText()) {
+
 
                 Message inMessage = update.getMessage();
 
 
-
-                //Создаем исходящее сообщение
-              //  SendMessage outMessage = new SendMessage();
-                //Указываем в какой чат будем отправлять сообщение
-                //(в тот же чат, откуда пришло входящее сообщение)
-             //   outMessage.setChatId(inMessage.getChatId());
-                //Указываем текст сообщения
-               // outMessage.setText("Кукла Нустя не плачь");
-
-
-
-            /*    SendVoice sv = new SendVoice();
-                sv.setChatId(inMessage.getChatId());
-                File testvoice = new File("resourses/test.opus");
-                sv.setVoice(testvoice);*/
-
-              //  execute(sv);
                execute(sendInlineKeyBoardMessage(inMessage.getChatId()));
-                //Отправляем сообщение
-               // execute(outMessage);
+
             } else if(update.hasCallbackQuery()){
                 try {
-                  String filename =  update.getCallbackQuery().getData();
+                    String filepath = "resourses";
+                    String filename =  update.getCallbackQuery().getData();
                     SendVoice sv = new SendVoice();
                     sv.setChatId(update.getCallbackQuery().getMessage().getChatId());
-                    File testvoice = new File("resourses/"+filename+".opus");
+                   if (System.getProperty("os.name").contains("Windows")){
+                       filepath = filepath +  "/";
+                   } else {
+                       filepath = filepath +  "\\";
+                   }
+                    File testvoice = new File(filepath+filename+".opus");
                     sv.setVoice(testvoice);
                       execute(sv);
 
